@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Sika – yhden nopan peli</title>
+<style>
+  body { font-family: Arial; padding: 20px; }
+  button { padding: 10px; margin: 5px; }
+</style>
+</head>
+<body>
+
+<h1>🎲 Sika – yhden nopan peli</h1>
+
+<div>
+  <label>Pelaajien nimet (pilkulla erotettuna): </label>
+  <input id="players" placeholder="Esim. Ville,Mari">
+  <button onclick="aloitaPeli()">Aloita peli</button>
+</div>
+
+<div id="game" style="margin-top:20px; display:none;">
+  <p id="vuoro"></p>
+  <p id="heitto"></p>
+  <p id="vuoronPisteet"></p>
+  <p id="kokonaispisteet"></p>
+  <button onclick="heittoNoppaa()">Heitä noppaa</button>
+  <button onclick="lopetaVuoro()">Lopeta vuoro</button>
+</div>
+
+<script>
+let pelaajat = [];
+let pisteet = [];
+let vuoronPisteet = 0;
+let nykyinen = 0;
+
+function aloitaPeli() {
+  pelaajat = document.getElementById("players").value.split(",");
+  pisteet = Array(pelaajat.length).fill(0);
+  vuoronPisteet = 0;
+  nykyinen = 0;
+  document.getElementById("game").style.display = "block";
+  paivitaVuoro();
+}
+
+function heittoNoppaa() {
+  let heitto = Math.floor(Math.random() * 6) + 1;
+  document.getElementById("heitto").innerText = "Heitit: " + heitto;
+  if (heitto === 1) {
+    alert("Ykkönen! Vuorosi päättyy ja et saa pisteitä.");
+    vuoronPisteet = 0;
+    seuraavaVuoro();
+  } else {
+    vuoronPisteet += heitto;
+    document.getElementById("vuoronPisteet").innerText = "Vuoron pisteet: " + vuoronPisteet;
+  }
+  paivitaKokonaispisteet();
+}
+
+function lopetaVuoro() {
+  pisteet[nykyinen] += vuoronPisteet;
+  vuoronPisteet = 0;
+  if (pisteet[nykyinen] >= 100) {
+    alert(pelaajat[nykyinen] + " voitti pelin " + pisteet[nykyinen] + " pisteellä! 🎉");
+    document.getElementById("game").style.display = "none";
+  } else {
+    seuraavaVuoro();
+  }
+}
+
+function seuraavaVuoro() {
+  nykyinen = (nykyinen + 1) % pelaajat.length;
+  vuoronPisteet = 0;
+  paivitaVuoro();
+}
+
+function paivitaVuoro() {
+  document.getElementById("vuoro").innerText = "Nykyinen vuoro: " + pelaajat[nykyinen];
+  document.getElementById("heitto").innerText = "";
+  document.getElementById("vuoronPisteet").innerText = "Vuoron pisteet: " + vuoronPisteet;
+  paivitaKokonaispisteet();
+}
+
+function paivitaKokonaispisteet() {
+  let teksti = "Kokonaispisteet:\n";
+  for (let i = 0; i < pelaajat.length; i++) {
+    teksti += pelaajat[i] + ": " + pisteet[i] + " pistettä\n";
+  }
+  document.getElementById("kokonaispisteet").innerText = teksti;
+}
+</script>
+
+</body>
+</html>
